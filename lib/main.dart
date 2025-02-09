@@ -28,9 +28,23 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   int _counter = 0;
   bool _showFirstImage = true;
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _controller.value = 1.0;
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -39,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _toggleImage() {
+    _controller.forward(from: 0.0);
     setState(() {
       _showFirstImage = !_showFirstImage;
     });
@@ -61,20 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 20),
-            // Image with error handling & loading indicator
-            SizedBox(
-              height: 150,
+            FadeTransition(
+              opacity: _fadeAnimation,
               child: Image.network(
                 _showFirstImage
-                    ? "https://upload.wikimedia.org/wikipedia/en/1/13/One_Piece_Anime_Logo_International.png?20241224005113"
-                    : "https://upload.wikimedia.org/wikipedia/en/a/a4/Roronoa_Zoro.jpg?20190904220742",
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const Center(child: CircularProgressIndicator());
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.error, size: 50, color: Colors.red);
-                },
+                    ? "https://upload.wikimedia.org/wikipedia/en/1/13/One_Piece_Anime_Logo_International.png"
+                    : "https://upload.wikimedia.org/wikipedia/en/a/a4/Roronoa_Zoro.jpg",
+                height: 150,
               ),
             ),
             const SizedBox(height: 20),
