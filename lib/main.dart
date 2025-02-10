@@ -31,14 +31,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   int _counter = 0;
-  int _imageIndex = 0; 
+  int _imageIndex = 0;
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
 
   final List<String> _images = [
     "https://upload.wikimedia.org/wikipedia/en/1/13/One_Piece_Anime_Logo_International.png", // First Image
-    "https://upload.wikimedia.org/wikipedia/en/a/a4/Roronoa_Zoro.jpg", // Second Image
-    "https://upload.wikimedia.org/wikipedia/en/a/aa/Sanji_%28One_Piece%29.jpg?20211208102220" // Third Image
+    "https://upload.wikimedia.org/wikipedia/en/a/a4/Roronoa_Zoro.jpg",             // Second Image
+    "https://upload.wikimedia.org/wikipedia/en/a/aa/Sanji_%28One_Piece%29.jpg"    // Third Image
   ];
 
   @override
@@ -61,23 +61,50 @@ class _MyHomePageState extends State<MyHomePage>
   void _toggleImage() {
     _controller.forward(from: 0.0);
     setState(() {
-      _imageIndex = (_imageIndex + 1) % _images.length; // Cycles through 3 images
+      _imageIndex = (_imageIndex + 1) % _images.length;
     });
   }
 
   void _reset() {
     setState(() {
       _counter = 0;
-      _imageIndex = 0; // Resets to the first image
+      _imageIndex = 0;
     });
+  }
+
+  /// This function shows a confirmation dialog. If the user presses "Yes",
+  /// it calls [_reset]. Otherwise, it just dismisses the dialog.
+  void _confirmReset() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Confirm Reset"),
+          content: const Text("Are you sure you want to reset?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), 
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _reset();                    // Perform the reset
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Center(
         child: Column(
@@ -110,10 +137,11 @@ class _MyHomePageState extends State<MyHomePage>
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _reset,
+              onPressed: _confirmReset, // Show the confirmation dialog instead
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 252, 252, 252),
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 textStyle: const TextStyle(fontSize: 18),
               ),
               child: const Text("Reset"),
