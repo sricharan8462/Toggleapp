@@ -36,9 +36,9 @@ class _MyHomePageState extends State<MyHomePage>
   late Animation<double> _fadeAnimation;
 
   final List<String> _images = [
-    "https://upload.wikimedia.org/wikipedia/en/1/13/One_Piece_Anime_Logo_International.png", // First Image
-    "https://upload.wikimedia.org/wikipedia/en/a/a4/Roronoa_Zoro.jpg",             // Second Image
-    "https://upload.wikimedia.org/wikipedia/en/a/aa/Sanji_%28One_Piece%29.jpg"    // Third Image
+    "https://upload.wikimedia.org/wikipedia/en/1/13/One_Piece_Anime_Logo_International.png",
+    "https://upload.wikimedia.org/wikipedia/en/a/a4/Roronoa_Zoro.jpg",
+    "https://upload.wikimedia.org/wikipedia/en/a/aa/Sanji_%28One_Piece%29.jpg"
   ];
 
   @override
@@ -65,33 +65,27 @@ class _MyHomePageState extends State<MyHomePage>
     });
   }
 
-  void _reset() {
-    setState(() {
-      _counter = 0;
-      _imageIndex = 0;
-    });
-  }
-
-  /// This function shows a confirmation dialog. If the user presses "Yes",
-  /// it calls [_reset]. Otherwise, it just dismisses the dialog.
   void _confirmReset() {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Confirm Reset"),
           content: const Text("Are you sure you want to reset?"),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(), 
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                _reset();                    // Perform the reset
+                Navigator.of(context).pop();
+                setState(() {
+                  _counter = 0;
+                  _imageIndex = 0;
+                });
               },
-              child: const Text("Yes"),
+              child: const Text("Reset", style: TextStyle(color: Colors.red)),
             ),
           ],
         );
@@ -106,7 +100,8 @@ class _MyHomePageState extends State<MyHomePage>
         title: Text(widget.title),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0), // ✅ Added padding for cleaner UI
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -115,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage>
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30), // ✅ Increased spacing
             FadeTransition(
               opacity: _fadeAnimation,
               child: Image.network(
@@ -130,21 +125,38 @@ class _MyHomePageState extends State<MyHomePage>
                 },
               ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _toggleImage,
-              child: const Text("Toggle Image"),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _confirmReset, // Show the confirmation dialog instead
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 252, 252, 252),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: const Text("Reset"),
+            const SizedBox(height: 30), 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _toggleImage,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    textStyle: const TextStyle(fontSize: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Toggle Image"),
+                ),
+                const SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: _confirmReset,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(123, 129, 157, 216),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    textStyle: const TextStyle(fontSize: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Reset"),
+                ),
+              ],
             ),
           ],
         ),
@@ -152,6 +164,7 @@ class _MyHomePageState extends State<MyHomePage>
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
+        backgroundColor: Colors.green,
         child: const Icon(Icons.add),
       ),
     );
